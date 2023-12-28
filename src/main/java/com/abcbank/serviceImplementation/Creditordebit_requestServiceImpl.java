@@ -4,11 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.abcbank.model.Chequebook_request;
+import com.abcbank.DTO.CreditorDebitDTO;
 import com.abcbank.model.Creditordebit_request;
 import com.abcbank.repository.Creditordebit_requestRepo;
 import com.abcbank.service.Creditordebit_requestService;
@@ -25,13 +23,13 @@ public class Creditordebit_requestServiceImpl implements Creditordebit_requestSe
 		List<Creditordebit_request> cb =creditorDebitRequestRepo.findAll();
 		for(Creditordebit_request cr:cb) {
 		Map<String,Object>map=new HashMap<String,Object>();
-		map.put("account_number", cr.getAccountCreditordebit().getAccount_number());
-		map.put("acount_type", cr.getAccountCreditordebit().getAccount_type());
-		map.put("user_name",  cr.getAccountCreditordebit().getCustomer().getName());
-		map.put("request_date",    cr.getRequest_date());
-		map.put("card_type",   cr.getCard_type());
-		map.put("response_status",    cr.getResponse_status());
-	    map.put("response_message",cr.getResponse_message());
+		map.put("Account Number", cr.getAccountCreditordebit().getAccount_number());
+		map.put("Account Type", cr.getAccountCreditordebit().getAccount_type());
+		map.put("Customer Name",  cr.getAccountCreditordebit().getCustomer().getName());
+		map.put("Request Date",    cr.getRequest_date());
+		map.put("Card Type",   cr.getCard_type());
+		map.put("Status",    cr.getResponse_status());
+	    map.put("Reason For Rejection",cr.getResponse_message());
 
 		list.add(map);
 		}
@@ -43,18 +41,39 @@ public class Creditordebit_requestServiceImpl implements Creditordebit_requestSe
 		 Map<String,Object> map=new HashMap<String,Object>();
 	        Creditordebit_request cb= creditorDebitRequestRepo.findById(credit_debit_request_id).orElse(null);
 	        if(cb!=null){
-			map.put("account_number", cb.getAccountCreditordebit().getAccount_number());
-			map.put("acount_type", cb.getAccountCreditordebit().getAccount_type());
-			map.put("user_name",  cb.getAccountCreditordebit().getCustomer().getName());
-			map.put("request_date",    cb.getRequest_date());
-			map.put("card_type",   cb.getCard_type());
-			map.put("response_status",         cb.getResponse_status());
-		    map.put("response_message",cb.getResponse_message());
+			map.put("Account Number", cb.getAccountCreditordebit().getAccount_number());
+			map.put("Account Type", cb.getAccountCreditordebit().getAccount_type());
+			map.put("Customer Name",  cb.getAccountCreditordebit().getCustomer().getName());
+			map.put("Request Date",    cb.getRequest_date());
+			map.put("Card Type",   cb.getCard_type());
+			map.put("Status",         cb.getResponse_status());
+		    map.put("Reason For Rejection",cb.getResponse_message());
 			}
 			else {
-			map.put("status", "error");
-			map.put("Message","enter valid id");
+			map.put("Status", "Error");
+			map.put("Message","Enter valid CreditorDebit Id");
 			}
 			return map;
 			}
+
+	@Override
+	public Object updateById(CreditorDebitDTO cbDTO) {
+		Map<String,Object> map=new HashMap<String,Object>();
+		Creditordebit_request cbrq=creditorDebitRequestRepo.findById(cbDTO.getId()).orElse(null);
+		
+		if(cbrq!=null) {
+		cbrq.setResponse_status(cbDTO.getResponse_status());
+		cbrq.setResponse_message(cbDTO.getResponse_message());
+		
+		creditorDebitRequestRepo.saveAndFlush(cbrq);
+		
+		map.put("Status", "Success");
+		map.put("Message", "CreditorDebit Request Update Sucessfully");
+		}else
+		{
+			map.put("Status", "Error");
+			map.put("Message", "Invalid CreditorDebit Request Id");
+		}
+		return map;
+	}
 }

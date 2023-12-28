@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.abcbank.DTO.StolenDTO;
 import com.abcbank.model.Creditordebit_request;
 import com.abcbank.model.Lostorstolen_request;
 import com.abcbank.repository.Lostorstolen_requestRepo;
@@ -24,13 +25,10 @@ public class Lostorstolen_requestServiceImpl implements Lostorstolen_requestServ
 		List<Lostorstolen_request> cb =stolenRepo.findAll();
 		for(Lostorstolen_request sl:cb) {
 		Map<String,Object>map=new HashMap<String,Object>();
-		map.put("account_number", sl.getAccountlost().getAccount_number());
-		map.put("acount_type", sl.getAccountlost().getAccount_type());
-		map.put("user_name",  sl.getAccountlost().getCustomer().getName());
-		map.put("request_date",    sl.getRequest_date());
-		map.put("card_type",   sl.getCard_type());
-		map.put("response_status",    sl.getResponse_status());
-	    map.put("response_message",sl.getResponse_message());
+		map.put("Card Number", sl.getCard_number());
+		map.put("Card Type",   sl.getCard_type());
+		map.put("Status",    sl.getResponse_status());
+	    map.put("Response Message",sl.getResponse_message());
 
 		list.add(map);
 		}
@@ -40,21 +38,35 @@ public class Lostorstolen_requestServiceImpl implements Lostorstolen_requestServ
 	public Object getById(int lost_stolen_request_id) {
 		
 		 Map<String,Object> map=new HashMap<String,Object>();
-	        Lostorstolen_request sol= stolenRepo.findById(lost_stolen_request_id).orElse(null);
+	  Lostorstolen_request sol= stolenRepo.findById(lost_stolen_request_id).orElse(null);
 	        if(sol!=null){
-			map.put("account_number", sol.getAccountlost().getAccount_number());
-			map.put("acount_type", sol.getAccountlost().getAccount_type());
-			map.put("user_name",  sol.getAccountlost().getCustomer().getName());
-			map.put("request_date",    sol.getRequest_date());
-			map.put("card_type",   sol.getCard_type());
-			map.put("response_status",         sol.getResponse_status());
-		    map.put("response_message",sol.getResponse_message());
+	        map.put("Card Number", sol.getCard_number());
+			map.put("Card Type",   sol.getCard_type());
+			map.put("Status",         sol.getResponse_status());
+		    map.put("Response Message",sol.getResponse_message());
 			}
 			else {
-			map.put("status", "error");
-			map.put("Message","enter valid id");
+			map.put("Status", "Error");
+			map.put("Message","Enter Valid Id");
 			}
 			return map;
 		}
+	@Override
+	public Object updateById(StolenDTO dto) {
+		 Map<String,Object> map=new HashMap<String,Object>();
+		 Lostorstolen_request lsr=stolenRepo.findById(dto.getId()).orElse(null);
+		 if(lsr!=null) {
+			 lsr.setResponse_status(dto.getResponse_status());
+			 lsr.setResponse_message(dto.getResponse_message());
+			 stolenRepo.saveAndFlush(lsr);
+			 map.put("Status", "Success");
+			 map.put("Message","Update Sucessfully");
+		 }else
+		 {
+		 map.put("Status", "Error");
+		 map.put("Message","Invailed Lostorstolen Request Id");
+		 }
+		return map;
+	}
 
 }

@@ -4,16 +4,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.abcbank.DTO.ChequeDTO;
 import com.abcbank.model.Chequebook_request;
 import com.abcbank.repository.Chequebook_requestRepo;
 import com.abcbank.service.Chequebook_requestService;
 
-import jakarta.transaction.Transactional;
 
 @Service
 public class Chequebook_requestServiceImpl implements Chequebook_requestService {
@@ -27,13 +24,13 @@ public class Chequebook_requestServiceImpl implements Chequebook_requestService 
 			List<Chequebook_request>cheque=chequeRepo.findAll();
 			for(Chequebook_request e:cheque) {
 			Map<String,Object>map=new HashMap<String,Object>();
-			map.put("account_number", e.getAccountforCheque().getAccount_number());
-			map.put("acounttype", e.getAccountforCheque().getAccount_type());
-			map.put("user name",  e.getAccountforCheque().getCustomer().getName());
-			map.put("request date",    e.getRequest_date());
-			map.put("number of cheque leaves",   e.getNumber_of_cheque_leaves());
+			map.put("Account Number", e.getAccountforCheque().getAccount_number());
+			map.put("Account Type", e.getAccountforCheque().getAccount_type());
+			map.put("Customer Name",  e.getAccountforCheque().getCustomer().getName());
+			map.put("Request Date",    e.getRequest_date());
+			map.put("Number of Leaves",   e.getNumber_of_cheque_leaves());
 			map.put("Status",         e.getResponse_status());
-		    map.put("response_message",e.getResponse_message());
+		    map.put("Reason For Rejection",e.getResponse_message());
 			list.add(map);
 			}
 			return list;
@@ -44,24 +41,21 @@ public class Chequebook_requestServiceImpl implements Chequebook_requestService 
         Map<String,Object> map=new HashMap<String,Object>();
         Chequebook_request cheque= chequeRepo.findById(chequebook_request_id).orElse(null);
 	if(cheque!=null){
-		map.put("account_number", cheque.getAccountforCheque().getAccount_number());
-		map.put("acount_type", cheque.getAccountforCheque().getAccount_type());
-		map.put("user_name",  cheque.getAccountforCheque().getCustomer().getName());
-		map.put("request_date",    cheque.getRequest_date());
-		map.put("number_of_cheque_leaves",   cheque.getNumber_of_cheque_leaves());
-		map.put("response_status",         cheque.getResponse_status());
-	    map.put("response_message",cheque.getResponse_message());
+		map.put("Account Number", cheque.getAccountforCheque().getAccount_number());
+		map.put("Account Type", cheque.getAccountforCheque().getAccount_type());
+		map.put("Customer Name",  cheque.getAccountforCheque().getCustomer().getName());
+		map.put("Request Date",    cheque.getRequest_date());
+		map.put("Number of Leaves",   cheque.getNumber_of_cheque_leaves());
+		map.put("Status",         cheque.getResponse_status());
+	    map.put("Reason For Rejection",cheque.getResponse_message());
 		}
 		else {
-		map.put("status", "error");
-		map.put("Message","enter valid id");
+		map.put("Status", "Error");
+		map.put("Message","Enter valid Chequebook Request Id");
 		}
 		return map;
 		}
 	
-	
-
-
 	@Override
 	public Object updateById(ChequeDTO chequeBookRequest) {
 		
@@ -76,14 +70,14 @@ public class Chequebook_requestServiceImpl implements Chequebook_requestService 
 			
 			chequeRepo.saveAndFlush(chequebook_request);
 			
-			 map.put("status", "success");
-		     map.put("message", "Chequebook request updated successfully");
+			 map.put("Status", "Success");
+		     map.put("Message", "Chequebook request updated successfully");
 			
 		}
 		else 
 		{
-			map.put("status", "error");
-	        map.put("message", "Invalid Chequebook Request ID");
+			map.put("Status", "Error");
+	        map.put("Message", "Invalid Chequebook Request ID");
 		}
 		return map;
 	}
